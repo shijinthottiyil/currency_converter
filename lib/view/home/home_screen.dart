@@ -1,35 +1,44 @@
+import 'dart:developer';
 import 'dart:ui';
 
+import 'package:currency_converter/controller/home_controller.dart';
 import 'package:currency_converter/utils/constants/colors.dart';
 import 'package:currency_converter/utils/constants/images.dart';
-import 'package:currency_converter/utils/frosted_glass.dart';
+import 'package:currency_converter/view/home/widgets/input_widget.dart';
+import 'package:currency_picker/currency_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final height = MediaQuery.sizeOf(context).height;
-
+    final homeController = ref.watch(homeProvider);
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(KImages.bg),
-            fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(KImages.bg),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 20.0,
+                sigmaY: 20.0,
+              ),
+              child: Container(),
+            ),
           ),
-        ),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: 3.0,
-            sigmaY: 3.0,
-          ),
-          child: Container(
-            child: SafeArea(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
                     Text(
@@ -92,13 +101,79 @@ class HomeScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.all(20),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                // mainAxisAlignment:
+                                //     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    "Amount",
-                                    style: TextStyle(
-                                      color: KColors.white60,
-                                    ),
+                                  InputWidget(
+                                    heading: "Amount",
+                                    symbol: homeController.fromSymbol,
+                                    onPressed: () {
+                                      homeController.showCurrency(
+                                          context, true);
+                                    },
+                                    controller: homeController.fromController,
                                   ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Divider(
+                                          color: KColors.white,
+                                        ),
+                                      ),
+                                      RawMaterialButton(
+                                        onPressed: homeController.swapCurrency,
+                                        elevation: 0.1,
+                                        fillColor: Colors.transparent,
+                                        child: Icon(
+                                          Icons.cached_rounded,
+                                          size: 35,
+                                          color: KColors.white,
+                                        ),
+                                        padding: EdgeInsets.all(10),
+                                        shape: CircleBorder(),
+                                      ),
+                                      Expanded(
+                                          child: Divider(
+                                        color: KColors.white,
+                                      )),
+                                    ],
+                                  ),
+                                  InputWidget(
+                                    heading: "Converted Amount",
+                                    symbol: homeController.toSymbol,
+                                    onPressed: () {
+                                      homeController.showCurrency(
+                                          context, false);
+                                    },
+                                    controller: homeController.toController,
+                                  ),
+                                  // Expanded(
+                                  //   child: Column(
+                                  //     crossAxisAlignment:
+                                  //         CrossAxisAlignment.start,
+                                  //     children: [
+                                  //       Text(
+                                  //         "Converted Amount",
+                                  //         style: TextStyle(
+                                  //           color: KColors.white60,
+                                  //         ),
+                                  //       ),
+                                  //       SizedBox(
+                                  //         width: double.infinity,
+                                  //         height: height / 100,
+                                  //       ),
+                                  //       SizedBox(
+                                  //         width: double.infinity,
+                                  //         height: height / 100,
+                                  //       ),
+                                  //       SizedBox(
+                                  //         width: double.infinity,
+                                  //         height: height / 100,
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),
@@ -133,7 +208,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

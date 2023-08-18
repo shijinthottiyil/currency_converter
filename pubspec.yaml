@@ -7,9 +7,11 @@ environment:
   sdk: '>=3.0.6 <4.0.0'
 
 dependencies:
+  currency_picker: ^2.0.16
   flutter:
     sdk: flutter
-  
+  flutter_riverpod: ^2.3.7
+  fluttertoast: ^8.2.2
 
 dev_dependencies:
   flutter_lints: ^2.0.0
