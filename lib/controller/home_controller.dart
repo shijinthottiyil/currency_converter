@@ -1,13 +1,17 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:currency_converter/model/response_model.dart';
 import 'package:currency_converter/utils/constants/api.dart';
 import 'package:currency_converter/utils/constants/texts.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final homeProvider = ChangeNotifierProvider<HomeController>(
@@ -25,7 +29,56 @@ class HomeController with ChangeNotifier {
   var isLoading = false;
   var exchangRate = 0.0;
   var isComplete = false;
+  // <========INTERNET CONNECTIVITY CHECK
+  late StreamSubscription subscription;
+  bool isDeviceConnected = false;
+  bool isAlertSet = false;
   //METHODS
+// METHOD FOR CONNECTIVITY CHECK
+  void checkConnectivity(BuildContext context) {
+    subscription = Connectivity().onConnectivityChanged.listen(
+      (ConnectivityResult result) async {
+        isDeviceConnected = await InternetConnectionChecker().hasConnection;
+        if (!isDeviceConnected && isAlertSet == false) {
+          showDialogBox(context);
+          isAlertSet = true;
+          notifyListeners();
+        }
+      },
+    );
+  }
+
+  // METHOD FOR SHOWING DIALOG
+  Future<void> showDialogBox(BuildContext context) async {
+    await showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: const Text('No Connection'),
+          content: const Text('Please check your internet connectivity'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context, 'Cancel');
+                // setState(() => isAlertSet = false);
+                isAlertSet = false;
+                notifyListeners();
+                isDeviceConnected =
+                    await InternetConnectionChecker().hasConnection;
+                if (!isDeviceConnected && isAlertSet == false) {
+                  showDialogBox(context);
+                  // setState(() => isAlertSet = true);
+                  isAlertSet = true;
+                  notifyListeners();
+                }
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
 // METHOD TO READ DATA FROM SHARED PREFERENCES
   Future<void> readLocalData() async {

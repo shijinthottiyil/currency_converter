@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
-
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:currency_converter/controller/home_controller.dart';
 import 'package:currency_converter/utils/constants/colors.dart';
 import 'package:currency_converter/utils/constants/images.dart';
@@ -13,26 +14,48 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(homeProvider).checkConnectivity(context);
+    getLocalData();
+  }
+
+  @override
+  void dispose() {
+    ref.read(homeProvider).subscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> getLocalData() async {
+    await ref.read(homeProvider).readLocalData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height;
     final homeController = ref.watch(homeProvider);
 
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) async {
-        // final prefs = await SharedPreferences.getInstance();
-        // final data = prefs.getString(KTexts.key1);
-        // final data2 = prefs.getString(KTexts.key2);
-        // log("data in shared preferences = $data");
-        // log("data stored secondly = $data2");
-        if (!homeController.isComplete) {
-          await homeController.readLocalData();
-        }
-      },
-    );
+    // WidgetsBinding.instance.addPostFrameCallback(
+    //   (_) async {
+    //     // final prefs = await SharedPreferences.getInstance();
+    //     // final data = prefs.getString(KTexts.key1);
+    //     // final data2 = prefs.getString(KTexts.key2);
+    //     // log("data in shared preferences = $data");
+    //     // log("data stored secondly = $data2");
+    //     if (!homeController.isComplete) {
+    //       await homeController.readLocalData();
+    //     }
+    //   },
+    // );
     // homeController.mock();
 
     return Scaffold(
@@ -253,3 +276,16 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
+
+
+
+
+
+// class HomeScreen extends ConsumerWidget {
+//   const HomeScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+
+//   }
+// }
