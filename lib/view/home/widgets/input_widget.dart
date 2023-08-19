@@ -9,11 +9,13 @@ class InputWidget extends StatelessWidget {
     required this.symbol,
     required this.onPressed,
     required this.controller,
+    required this.isReadOnly,
   });
   final String heading;
   final String symbol;
   final VoidCallback onPressed;
   final TextEditingController controller;
+  final bool isReadOnly;
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -62,6 +64,7 @@ class InputWidget extends StatelessWidget {
           //   height: height / 100,
           // ),
           CupertinoTextField(
+            readOnly: isReadOnly,
             controller: controller,
             keyboardType: TextInputType.number,
             maxLength: 10,
