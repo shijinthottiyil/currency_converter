@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -19,12 +20,21 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final height = MediaQuery.sizeOf(context).height;
     final homeController = ref.watch(homeProvider);
-    // WidgetsBinding.instance.addPostFrameCallback(
-    //   (_) async {
-    //     await homeController.mock();
-    //   },
-    // );
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) async {
+        // final prefs = await SharedPreferences.getInstance();
+        // final data = prefs.getString(KTexts.key1);
+        // final data2 = prefs.getString(KTexts.key2);
+        // log("data in shared preferences = $data");
+        // log("data stored secondly = $data2");
+        if (!homeController.isComplete) {
+          await homeController.readLocalData();
+        }
+      },
+    );
     // homeController.mock();
+
     return Scaffold(
       body: Stack(
         children: [

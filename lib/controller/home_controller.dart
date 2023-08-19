@@ -8,6 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final homeProvider = ChangeNotifierProvider<HomeController>(
   (ref) {
@@ -23,13 +24,30 @@ class HomeController with ChangeNotifier {
   var toController = TextEditingController(text: "");
   var isLoading = false;
   var exchangRate = 0.0;
+  var isComplete = false;
   //METHODS
+
+// METHOD TO READ DATA FROM SHARED PREFERENCES
+  Future<void> readLocalData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final _fromSymbol = prefs.getString(KTexts.key1);
+    final _toSymbol = prefs.getString(KTexts.key2);
+    fromSymbol = _fromSymbol ?? KTexts.defCurr;
+    toSymbol = _toSymbol ?? KTexts.defCurr;
+    isComplete = true;
+    notifyListeners();
+  }
+
   void showCurrency(BuildContext context, bool isFromSymbol) {
     showCurrencyPicker(
       context: context,
       onSelect: (Currency currency) async {
+        final prefs = await SharedPreferences.getInstance();
         if (isFromSymbol) {
           fromSymbol = currency.code;
+          if (fromSymbol != KTexts.defCurr) {
+            prefs.setString(KTexts.key1, fromSymbol);
+          }
           notifyListeners();
         } else {
           if (fromSymbol == KTexts.defCurr) {
@@ -44,6 +62,7 @@ class HomeController with ChangeNotifier {
             return;
           }
           toSymbol = currency.code;
+          prefs.setString(KTexts.key2, toSymbol);
           notifyListeners();
           await fetchExchangeRate(baseCode: fromSymbol, targetCode: toSymbol);
         }
@@ -114,8 +133,9 @@ class HomeController with ChangeNotifier {
   //   });
   // }
   // METHOD FOR CONVERTING
-  void covert() {
+  void covert() async {
     num userInput = num.parse(fromController.text);
+
     num result = userInput * exchangRate;
     toController.text = result.toString();
   }
