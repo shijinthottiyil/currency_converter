@@ -249,16 +249,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                               SizedBox(
                                   width: double.infinity, height: height / 80),
-                              Text(
-                                homeController.fromSymbol != KTexts.defCurr &&
-                                        homeController.toSymbol !=
-                                            KTexts.defCurr
-                                    ? "1 ${homeController.fromSymbol} = ${homeController.exchangRate} ${homeController.toSymbol}"
-                                    : KTexts.select,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 18,
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    homeController.fromSymbol !=
+                                                KTexts.defCurr &&
+                                            homeController.toSymbol !=
+                                                KTexts.defCurr
+                                        ? "1 ${homeController.fromSymbol} = ${homeController.exchangRate} ${homeController.toSymbol}"
+                                        : KTexts.select,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: homeController.exchangRate == 0.0,
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        homeController.fetchExchangeRate(
+                                          baseCode: homeController.fromSymbol,
+                                          targetCode: homeController.toSymbol,
+                                        );
+                                      },
+                                      style: OutlinedButton.styleFrom(
+                                          shape: const CircleBorder()),
+                                      child: const Icon(
+                                        Icons.refresh,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               )
                             ],
                           )
