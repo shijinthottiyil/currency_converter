@@ -25,18 +25,18 @@ class InputWidget extends StatelessWidget {
         children: [
           Text(
             heading,
-            style: TextStyle(
+            style: const TextStyle(
               color: KColors.white60,
             ),
           ),
           Row(
             children: [
               Text(symbol),
-              Spacer(),
+              const Spacer(),
               OutlinedButton(
                 onPressed: onPressed,
-                style: OutlinedButton.styleFrom(shape: CircleBorder()),
-                child: Icon(
+                style: OutlinedButton.styleFrom(shape: const CircleBorder()),
+                child: const Icon(
                   Icons.mode_edit_rounded,
                   color: Colors.black,
                 ),

@@ -1,18 +1,13 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:ui';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:currency_converter/controller/home_controller.dart';
 import 'package:currency_converter/utils/constants/colors.dart';
 import 'package:currency_converter/utils/constants/images.dart';
 import 'package:currency_converter/utils/constants/texts.dart';
 import 'package:currency_converter/view/home/widgets/input_widget.dart';
-import 'package:currency_picker/currency_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -62,7 +57,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(KImages.bg),
                 fit: BoxFit.cover,
@@ -90,7 +85,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Text(
+                          const Text(
                             "Currency Converter",
                             style: TextStyle(
                               fontSize: 25,
@@ -100,7 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           SizedBox(
                               width: double.infinity, height: height / 100),
-                          Text(
+                          const Text(
                             "Check live rates, set rate alerts, receive notifications and more.",
                             style: TextStyle(
                               fontSize: 16,
@@ -169,7 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         ),
                                         Row(
                                           children: [
-                                            Expanded(
+                                            const Expanded(
                                               child: Divider(
                                                 color: KColors.white,
                                               ),
@@ -179,16 +174,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                   homeController.swapCurrency,
                                               onPressed: homeController.covert,
                                               elevation: 0.1,
-                                              fillColor: Colors.transparent,
-                                              child: Icon(
+                                              fillColor: const Color.fromRGBO(
+                                                  0, 0, 0, 0),
+                                              padding: const EdgeInsets.all(10),
+                                              shape: const CircleBorder(),
+                                              child: const Icon(
                                                 Icons.cached_rounded,
                                                 size: 35,
                                                 color: KColors.white,
                                               ),
-                                              padding: EdgeInsets.all(10),
-                                              shape: CircleBorder(),
                                             ),
-                                            Expanded(
+                                            const Expanded(
                                                 child: Divider(
                                               color: KColors.white,
                                             )),
@@ -243,7 +239,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "Indicative Exchange Rate",
                                 style: TextStyle(
                                   fontSize: 16,
@@ -259,7 +255,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                             KTexts.defCurr
                                     ? "1 ${homeController.fromSymbol} = ${homeController.exchangRate} ${homeController.toSymbol}"
                                     : KTexts.select,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 18,
                                 ),

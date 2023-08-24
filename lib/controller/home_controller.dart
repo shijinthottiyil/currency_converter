@@ -29,45 +29,49 @@ class HomeController with ChangeNotifier {
   var isLoading = false;
   var exchangRate = 0.0;
   var isComplete = false;
-  // <========INTERNET CONNECTIVITY CHECK
+  // <========INTERNET CONNECTIVITY CHECK ====================================>
   late StreamSubscription subscription;
   bool isDeviceConnected = false;
   bool isAlertSet = false;
-  //METHODS
-// METHOD FOR CONNECTIVITY CHECK
+//METHODS
+//<========================== METHOD FOR CONNECTIVITY CHECK ========================>
   void checkConnectivity(BuildContext context) {
     subscription = Connectivity().onConnectivityChanged.listen(
       (ConnectivityResult result) async {
         isDeviceConnected = await InternetConnectionChecker().hasConnection;
         if (!isDeviceConnected && isAlertSet == false) {
-          showDialogBox(context);
-          isAlertSet = true;
-          notifyListeners();
+          if (context.mounted) {
+            showDialogBox(context);
+            isAlertSet = true;
+            notifyListeners();
+          }
         }
       },
     );
   }
 
-  // METHOD FOR SHOWING DIALOG
+  //<========================= METHOD FOR SHOWING DIALOG ==========================>
   Future<void> showDialogBox(BuildContext context) async {
     await showCupertinoDialog(
       context: context,
       builder: (context) {
         return CupertinoAlertDialog(
-          title: const Text('No Connection'),
-          content: const Text('Please check your internet connectivity'),
+          title: const Text('Connection lost'),
+          content: const Text('Check connection and retry'),
           actions: <Widget>[
             TextButton(
               onPressed: () async {
                 Navigator.pop(context, 'Cancel');
-                // setState(() => isAlertSet = false);
+
                 isAlertSet = false;
                 notifyListeners();
                 isDeviceConnected =
                     await InternetConnectionChecker().hasConnection;
                 if (!isDeviceConnected && isAlertSet == false) {
-                  showDialogBox(context);
-                  // setState(() => isAlertSet = true);
+                  if (context.mounted) {
+                    showDialogBox(context);
+                  }
+
                   isAlertSet = true;
                   notifyListeners();
                 }
@@ -80,17 +84,18 @@ class HomeController with ChangeNotifier {
     );
   }
 
-// METHOD TO READ DATA FROM SHARED PREFERENCES
+// <=================METHOD TO READ DATA FROM SHARED PREFERENCES=====================>
   Future<void> readLocalData() async {
     final prefs = await SharedPreferences.getInstance();
-    final _fromSymbol = prefs.getString(KTexts.key1);
-    final _toSymbol = prefs.getString(KTexts.key2);
-    fromSymbol = _fromSymbol ?? KTexts.defCurr;
-    toSymbol = _toSymbol ?? KTexts.defCurr;
+    final frmSymbol = prefs.getString(KTexts.key1);
+    final toSymbl = prefs.getString(KTexts.key2);
+    fromSymbol = frmSymbol ?? KTexts.defCurr;
+    toSymbol = toSymbl ?? KTexts.defCurr;
     isComplete = true;
     notifyListeners();
   }
 
+//<===============  METHOD FOR SELECTING CURRENCY==========================>
   void showCurrency(BuildContext context, bool isFromSymbol) {
     showCurrencyPicker(
       context: context,
@@ -123,6 +128,7 @@ class HomeController with ChangeNotifier {
     );
   }
 
+// <==================METHOD FOR SWAPING CURRENCY=======================>
   void swapCurrency() async {
     if (fromSymbol == KTexts.defCurr ||
         toSymbol == KTexts.defCurr ||
@@ -177,15 +183,7 @@ class HomeController with ChangeNotifier {
     }
   }
 
-  // mock() async {
-  //   isLoading = true;
-  //   notifyListeners();
-  //   Future.delayed(Duration(seconds: 5)).then((value) {
-  //     isLoading = false;
-  //     notifyListeners();
-  //   });
-  // }
-  // METHOD FOR CONVERTING
+  //<========================== METHOD FOR CONVERTING ============================>
   void covert() async {
     num userInput = num.parse(fromController.text);
 

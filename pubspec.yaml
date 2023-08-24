@@ -19,9 +19,15 @@ dependencies:
   shared_preferences: ^2.2.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/icons.png"
 
 flutter:
   uses-material-design: true
