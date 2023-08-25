@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
 import 'package:currency_converter/controller/home_controller.dart';
 import 'package:currency_converter/utils/constants/colors.dart';
@@ -8,6 +9,7 @@ import 'package:currency_converter/view/home/widgets/input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:lottie/lottie.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -283,9 +285,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     ),
                                   ),
                                 ],
-                              )
+                              ),
                             ],
-                          )
+                          ),
+                          SizedBox(width: double.infinity, height: height / 35),
+                          GestureDetector(
+                            // onVerticalDragUpdate: (details) {
+                            //   int sensitivity = 20;
+                            //   if (details.delta.dy > sensitivity) {
+                            //     log("mock swipe");
+                            //   } else if (details.delta.dy < -sensitivity) {
+                            //     log("mock swipe");
+                            //   }
+                            // },
+                            onTap: () {
+                              homeController.showModelSheet(context);
+                            },
+                            child: Lottie.asset(
+                              "assets/images/up_lottie.json",
+                              height: 50,
+                              width: 50,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -302,7 +323,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 
 // class HomeScreen extends ConsumerWidget {
-//   const HomeScreen({super.key});
+//   const HomeScreen({super.key});o
 
 //   @override
 //   Widget build(BuildContext context, WidgetRef ref) {

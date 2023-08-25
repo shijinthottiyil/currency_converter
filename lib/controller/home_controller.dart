@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:currency_converter/model/exchange_model.dart';
 import 'package:currency_converter/model/response_model.dart';
 import 'package:currency_converter/utils/constants/api.dart';
 import 'package:currency_converter/utils/constants/texts.dart';
@@ -189,5 +190,85 @@ class HomeController with ChangeNotifier {
 
     num result = userInput * exchangRate;
     toController.text = result.toString();
+  }
+
+// <================ MEHTOD FOR SHOWING SHOW MODEL BOTTOM SHEET =====================>
+  void showModelSheet(BuildContext context) async {
+    ExchangeModel exchangeModel;
+    exchangeModel = await getExchangeData();
+    if (context.mounted) {
+      showModalBottomSheet(
+        context: context,
+        elevation: 0,
+        showDragHandle: true,
+        isScrollControlled: true,
+        useSafeArea: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25),
+          ),
+        ),
+        builder: (context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                DataTable(
+                  // decoration: BoxDecoration(
+                  //   border: Border.all(
+                  //     color: Colors.red,
+                  //     width: 2.0,
+                  //   ),
+                  // ),
+                  columns: const [
+                    DataColumn(label: Text("Country Code")),
+                    DataColumn(label: Text("Exchange Rate")),
+                  ],
+                  rows: List.generate(exchangeModel.conversionRates.length,
+                      (index) {
+                    return DataRow(
+                      cells: [
+                        DataCell(Text(exchangeModel.conversionRates.keys
+                            .elementAt(index))),
+                        DataCell(Text(exchangeModel.conversionRates.values
+                            .elementAt(index)
+                            .toString())),
+                      ],
+                    );
+                  }),
+                  // rows: [
+                  //   DataRow(
+                  //     cells: [
+                  //       DataCell(Text("USD")),
+                  //       DataCell(Text("80")),
+                  //     ],
+                  //   ),
+                  //   DataRow(
+                  //     cells: [
+                  //       DataCell(Text("AED")),
+                  //       DataCell(Text("20")),
+                  //     ],
+                  //   ),
+                  // ],
+                ),
+                Text("NB:Country code & Exchange Rates based on INR"),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  // <=========== METHOD TO FETCH EXCHANGE RATES LIST ========================>
+  Future<ExchangeModel> getExchangeData() async {
+    try {
+      final response = await Dio().get(KApi.exchangeEndPoint);
+      final exchangeModel = ExchangeModel.fromJson(response.data);
+      // log(exchangeModel.toString());
+      return exchangeModel;
+    } catch (e) {
+      log(e.toString());
+      return ExchangeModel(conversionRates: {});
+    }
   }
 }

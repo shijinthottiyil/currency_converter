@@ -16,6 +16,7 @@ dependencies:
   fluttertoast: ^8.2.2
   internet_connection_checker: ^1.0.0+1
   loading_animation_widget: ^1.2.0+4
+  lottie: ^2.6.0
   shared_preferences: ^2.2.0
 
 dev_dependencies:
