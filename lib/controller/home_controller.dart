@@ -30,6 +30,7 @@ class HomeController with ChangeNotifier {
   var isLoading = false;
   var exchangRate = 0.0;
   var isComplete = false;
+  var isBottomSheetOpen = false;
   // <========INTERNET CONNECTIVITY CHECK ====================================>
   late StreamSubscription subscription;
   bool isDeviceConnected = false;
@@ -194,10 +195,17 @@ class HomeController with ChangeNotifier {
 
 // <================ MEHTOD FOR SHOWING SHOW MODEL BOTTOM SHEET =====================>
   void showModelSheet(BuildContext context) async {
+    isLoading = true;
+    notifyListeners();
     ExchangeModel exchangeModel;
     exchangeModel = await getExchangeData();
+    isLoading = false;
+    notifyListeners();
     if (context.mounted) {
-      showModalBottomSheet(
+      isBottomSheetOpen = true;
+      notifyListeners();
+      await showModalBottomSheet(
+        backgroundColor: Colors.transparent,
         context: context,
         elevation: 0,
         showDragHandle: true,
@@ -256,6 +264,8 @@ class HomeController with ChangeNotifier {
           );
         },
       );
+      isBottomSheetOpen = false;
+      notifyListeners();
     }
   }
 
